@@ -1,0 +1,20 @@
+.img{
+    width: 75%;
+   
+    margin-left: 5%;
+     
+}
+.container{
+    display: flex;
+    align-items: center;
+    margin-top: 6%;
+}
+.head{
+    font-family: cursive;
+    margin: 3%;
+    text-align: center;
+    background: linear-gradient(to right, #ff1100, #008cff); 
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  
+}

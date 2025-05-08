@@ -1,8 +1,9 @@
 import React from 'react'
+import RegisterAndLogin from './Components/RegisterAndLogin/RegisterAndLogin'
 
 const App = () => {
   return (
-    <div>App</div>
+    <div><RegisterAndLogin/></div>
   )
 }
 
