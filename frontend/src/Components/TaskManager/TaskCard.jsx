@@ -9,7 +9,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-
 const TaskCard = ({ task, onTaskUpdated }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
@@ -17,7 +16,7 @@ const TaskCard = ({ task, onTaskUpdated }) => {
   const [status, setStatus] = useState(task.status);
   const [priority, setPriority] = useState(task.priority);
 
-  console.log("isiEditing",isEditing)
+  console.log("isiEditing", isEditing);
 
   const handleEdit = async () => {
     try {
@@ -31,7 +30,7 @@ const TaskCard = ({ task, onTaskUpdated }) => {
           },
         }
       );
-      onTaskUpdated(); 
+      onTaskUpdated();
       setIsEditing(false);
     } catch (err) {
       console.error("Error updating task:", err);
@@ -41,11 +40,14 @@ const TaskCard = ({ task, onTaskUpdated }) => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://task-management-application-3dmi.onrender.com/tasks/${task._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://task-management-application-3dmi.onrender.com/tasks/${task._id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       onTaskUpdated(); // Refresh tasks
     } catch (err) {
       console.error("Error deleting task:", err);
@@ -55,7 +57,13 @@ const TaskCard = ({ task, onTaskUpdated }) => {
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Typography variant="h6" component="div">
             {title}
           </Typography>
@@ -78,29 +86,56 @@ const TaskCard = ({ task, onTaskUpdated }) => {
           {description}
         </Typography>
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mt: 2,
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Checkbox
-  checked={status === "complete"}
-  onChange={async () => {
-    const newStatus = status === "complete" ? "incomplete" : "complete";
-    setStatus(newStatus);
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(`https://task-management-application-3dmi.onrender.com/tasks/${task._id}`, {
-        ...task,
-        status: newStatus,
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      onTaskUpdated();
-    } catch (err) {
-      console.error("Status update failed:", err);
-    }
-  }}
-/>
+            <Checkbox
+              checked={status === "complete"}
+              onChange={async () => {
+                const token = localStorage.getItem("token");
 
-            <Typography variant="body2">{status === "complete" ? "Complete" : "Incomplete"}</Typography>
+                if (status === "incomplete") {
+                  // Custom complete endpoint
+                  try {
+                    const response = await axios.put(
+                      `https://task-management-application-3dmi.onrender.com/tasks/${task._id}/complete`,
+                      {},
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    setStatus("complete");
+                    onTaskUpdated();
+                  } catch (err) {
+                    console.error("Error marking as complete:", err);
+                  }
+                } else {
+                  try {
+                    const response = await axios.put(
+                      `https://task-management-application-3dmi.onrender.com/tasks/${task._id}`,
+                      { ...task, status: "incomplete" },
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    setStatus("incomplete");
+                    onTaskUpdated();
+                  } catch (err) {
+                    console.error("Error marking as incomplete:", err);
+                  }
+                }
+              }}
+            />
+
+            <Typography variant="body2">
+              {status === "complete" ? "Complete" : "Incomplete"}
+            </Typography>
           </Box>
 
           <Box sx={{ display: "flex", gap: 2 }}>
@@ -120,13 +155,13 @@ const TaskCard = ({ task, onTaskUpdated }) => {
 const getPriorityColor = (priority) => {
   switch (priority) {
     case "Low":
-      return "#FFB3BA"; 
+      return "#FFB3BA";
     case "Medium":
       return "#FFDFBA";
     case "High":
-      return "#B3D7FF"; 
+      return "#B3D7FF";
     default:
-      return "#CCCCCC"; 
+      return "#CCCCCC";
   }
 };
 
