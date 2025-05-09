@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { LockOpen, PersonAdd } from "@mui/icons-material";
+import TaskManager from "../TaskManager/TaskManager";
 
 const RegisterAndLogin = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -19,6 +20,7 @@ const RegisterAndLogin = () => {
   const [confirmPass, setConfirmPass] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleAuth = async (type) => {
     setLoading(true);
@@ -33,7 +35,7 @@ const RegisterAndLogin = () => {
         throw new Error("Passwords do not match.");
       }
 
-      const url = `http://localhost:3001/auth/${type}`;
+      const url = `https://task-management-application-3dmi.onrender.com/auth/${type}`;
       const payload = { email, password };
 
       const response = await axios.post(url, payload);
@@ -41,6 +43,7 @@ const RegisterAndLogin = () => {
       if (type === "login") {
         localStorage.setItem("token", response.data.token);
         alert("Login successful");
+        setIsAuthenticated(true);
       } else {
         alert("Registration successful, please log in.");
         setIsRegister(false);
@@ -56,6 +59,9 @@ const RegisterAndLogin = () => {
     }
   };
 
+   if (isAuthenticated) {
+          return <TaskManager />;
+      }
   return (
     <div>
       <h1 className={styles.head}>Task Management Application</h1>
