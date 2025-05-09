@@ -78,7 +78,7 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated, isOpen, setIsO
       console.log(taskToEdit._id)
       const response = isEditMode
         ? await axios.put(
-            `http://localhost:3001/tasks/${taskToEdit._id}`,
+            `https://task-management-application-3dmi.onrender.com/tasks/${taskToEdit._id}`,
             payload,
             {
               headers: { Authorization: `Bearer ${token}` },
