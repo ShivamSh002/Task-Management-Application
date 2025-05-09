@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { red } from "@mui/material/colors";
+
 
 const TaskCard = ({ task, onTaskUpdated }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,6 +16,8 @@ const TaskCard = ({ task, onTaskUpdated }) => {
   const [description, setDescription] = useState(task.description);
   const [status, setStatus] = useState(task.status);
   const [priority, setPriority] = useState(task.priority);
+
+  console.log("isiEditing",isEditing)
 
   const handleEdit = async () => {
     try {
@@ -29,7 +31,7 @@ const TaskCard = ({ task, onTaskUpdated }) => {
           },
         }
       );
-      onTaskUpdated(); // Refresh tasks
+      onTaskUpdated(); 
       setIsEditing(false);
     } catch (err) {
       console.error("Error updating task:", err);
@@ -115,17 +117,16 @@ const TaskCard = ({ task, onTaskUpdated }) => {
   );
 };
 
-// Helper function to map priority to colors
 const getPriorityColor = (priority) => {
   switch (priority) {
     case "Low":
-      return "#FFB3BA"; // Light Red
+      return "#FFB3BA"; 
     case "Medium":
-      return "#FFDFBA"; // Light Yellow
+      return "#FFDFBA";
     case "High":
-      return "#B3D7FF"; // Light Blue
+      return "#B3D7FF"; 
     default:
-      return "#CCCCCC"; // Gray
+      return "#CCCCCC"; 
   }
 };
 

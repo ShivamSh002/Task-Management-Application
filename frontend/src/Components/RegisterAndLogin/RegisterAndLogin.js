@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { LockOpen, PersonAdd } from "@mui/icons-material";
 import TaskManager from "../TaskManager/TaskManager";
+import { useNavigate } from "react-router-dom";
 
 const RegisterAndLogin = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -21,6 +22,7 @@ const RegisterAndLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
    const [isAuthenticated, setIsAuthenticated] = useState(false);
+   const nav = useNavigate()
 
   const handleAuth = async (type) => {
     setLoading(true);
@@ -60,7 +62,7 @@ const RegisterAndLogin = () => {
   };
 
    if (isAuthenticated) {
-          return <TaskManager />;
+         nav("/task")
       }
   return (
     <div>

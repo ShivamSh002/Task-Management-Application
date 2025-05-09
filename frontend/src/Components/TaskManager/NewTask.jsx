@@ -22,8 +22,9 @@ const modalStyle = {
   p: 4,
 };
 
-const NewTaskModal = ({ onTaskCreated, taskToEdit = null, onTaskUpdated  }) => {
-    const isEditMode = Boolean(taskToEdit);
+const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
+  console.log("taskToEdit",taskToEdit)
+  const isEditMode = Boolean(taskToEdit);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
