@@ -70,12 +70,11 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated, isOpen, setIsO
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     const token = localStorage.getItem("token");
     const payload = { title, description, status, priority, dueDate };
-
+  
     try {
-      console.log(taskToEdit._id)
       const response = isEditMode
         ? await axios.put(
             `https://task-management-application-3dmi.onrender.com/tasks/${taskToEdit._id}`,
@@ -91,8 +90,13 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated, isOpen, setIsO
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-
-      isEditMode ? onTaskUpdated() : onTaskCreated(response.data);
+  
+      if (isEditMode) {
+        onTaskUpdated(); 
+      } else {
+        onTaskCreated(response.data); 
+      }
+  
       handleClose();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to submit task.");
@@ -100,7 +104,7 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated, isOpen, setIsO
       setLoading(false);
     }
   };
-
+  
   return (
     <>
       <Button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -16,26 +16,10 @@ const TaskCard = ({ task, onTaskUpdated, onEditClick }) => {
   const [status, setStatus] = useState(task.status);
   const [priority, setPriority] = useState(task.priority);
 
-  console.log("isiEditing", isEditing);
 
-  const handleEdit = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `https://task-management-application-3dmi.onrender.com/tasks/${task._id}`,
-        { title, description, status, priority },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      onTaskUpdated();
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Error updating task:", err);
-    }
-  };
+
+  
+  
 
   const handleDelete = async () => {
     try {
@@ -48,7 +32,7 @@ const TaskCard = ({ task, onTaskUpdated, onEditClick }) => {
           },
         }
       );
-      onTaskUpdated(); // Refresh tasks
+      onTaskUpdated(); 
     } catch (err) {
       console.error("Error deleting task:", err);
     }

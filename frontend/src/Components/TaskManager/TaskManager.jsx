@@ -15,6 +15,7 @@ const TaskManager = () => {
   const handleNewTask = (newTask) => {
     setTasks((prev) => [...prev, newTask]);
     setIsModalOpen(false);
+    fetchTasks(); 
   };
 
   const openEditModal = (task) => {
@@ -63,7 +64,7 @@ const TaskManager = () => {
           <NewTask
             onTaskCreated={handleNewTask}
             taskToEdit={editTask}
-            onTaskUpdated={fetchTasks}
+            onTaskUpdated={fetchTasks} 
             isOpen={isModalOpen}
             setIsOpen={setIsModalOpen}
           />
