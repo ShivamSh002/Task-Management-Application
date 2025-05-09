@@ -9,8 +9,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'https://task-management-application-3dmi.onrender.com',  
-  credentials: true,               
+  origin: '*',
 }));
 
 app.use(express.json());

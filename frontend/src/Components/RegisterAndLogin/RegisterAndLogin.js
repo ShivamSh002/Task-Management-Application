@@ -36,7 +36,7 @@ const RegisterAndLogin = () => {
       }
 
       const url = `https://task-management-application-3dmi.onrender.com/auth/${type}`;
-      const payload = { email, password };
+      const payload = { email, password , withCredentials: true};
 
       const response = await axios.post(url, payload);
 
