@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -22,10 +22,9 @@ const modalStyle = {
   p: 4,
 };
 
-const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
-  console.log("taskToEdit",taskToEdit)
-  const isEditMode = Boolean(taskToEdit);
-  const [open, setOpen] = useState(false);
+const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated, isOpen, setIsOpen }) => {
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -34,41 +33,66 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  useEffect(() => {
+    if (taskToEdit) {
+      setIsEditMode(true);
+      setTitle(taskToEdit.title || "");
+      setDescription(taskToEdit.description || "");
+      setDueDate(taskToEdit.dueDate ? taskToEdit.dueDate.split("T")[0] : "");
+      setPriority(taskToEdit.priority || "Medium");
+      setStatus(taskToEdit.status || "incomplete");
+    } else {
+      setIsEditMode(false);
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setPriority("Medium");
+      setStatus("incomplete");
+    }
+  }, [taskToEdit]);
 
+  const handleOpen = () => {
+    if(!isEditMode){
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setPriority("Medium");
+      setStatus("incomplete");
+    }
+    setIsOpen(true);
+  }
   const handleClose = () => {
-    setOpen(false);
+    setIsOpen(false);
+    setIsEditMode(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     const token = localStorage.getItem("token");
-  
+    const payload = { title, description, status, priority, dueDate };
+
     try {
-      const payload = { title, description, status, priority };
-  
+      console.log(taskToEdit._id)
       const response = isEditMode
-        ? await axios.put(`https://task-management-application-3dmi.onrender.com/tasks/${taskToEdit._id}`, payload, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-        : await axios.post("https://task-management-application-3dmi.onrender.com/tasks/", payload, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-  
-      if (isEditMode) {
-        onTaskUpdated(); 
-      } else {
-        onTaskCreated(response.data);
-      }
-  
+        ? await axios.put(
+            `http://localhost:3001/tasks/${taskToEdit._id}`,
+            payload,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          )
+        : await axios.post(
+            "https://task-management-application-3dmi.onrender.com/tasks/",
+            payload,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+      isEditMode ? onTaskUpdated() : onTaskCreated(response.data);
       handleClose();
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Failed to submit task.");
@@ -76,10 +100,9 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div>
+    <>
       <Button
         variant="contained"
         onClick={handleOpen}
@@ -92,18 +115,10 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
         Create Task
       </Button>
 
-      <Modal open={open} onClose={handleClose} aria-labelledby="modal-title">
+      <Modal open={isOpen} onClose={handleClose}>
         <Box sx={modalStyle}>
-          <Typography
-            id="modal-title"
-            variant="h6"
-            component="h2"
-            sx={{ fontWeight: "bold", mb: 1 }}
-          >
-            Create New Task
-          </Typography>
-          <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-            Enter the task details below.
+          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
+            {isEditMode ? "Edit Task" : "Create New Task"}
           </Typography>
 
           <TextField
@@ -114,7 +129,6 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
             margin="dense"
             required
           />
-
           <TextField
             label="Description"
             multiline
@@ -124,7 +138,6 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
             onChange={(e) => setDescription(e.target.value)}
             margin="dense"
           />
-          
           <TextField
             label="Due Date"
             type="date"
@@ -136,13 +149,8 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
           />
 
           <FormControl fullWidth margin="dense">
-            <InputLabel id="priority-select-label">Priority</InputLabel>
-            <Select
-              labelId="priority-select-label"
-              value={priority}
-              label="Priority"
-              onChange={(e) => setPriority(e.target.value)}
-            >
+            <InputLabel>Priority</InputLabel>
+            <Select value={priority} onChange={(e) => setPriority(e.target.value)} label="Priority">
               <MenuItem value="Low">Low</MenuItem>
               <MenuItem value="Medium">Medium</MenuItem>
               <MenuItem value="High">High</MenuItem>
@@ -150,13 +158,8 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
           </FormControl>
 
           <FormControl fullWidth margin="dense">
-            <InputLabel id="status-select-label">Status</InputLabel>
-            <Select
-              labelId="status-select-label"
-              value={status}
-              label="Status"
-              onChange={(e) => setStatus(e.target.value)}
-            >
+            <InputLabel>Status</InputLabel>
+            <Select value={status} onChange={(e) => setStatus(e.target.value)} label="Status">
               <MenuItem value="incomplete">Incomplete</MenuItem>
               <MenuItem value="complete">Complete</MenuItem>
             </Select>
@@ -169,21 +172,16 @@ const NewTaskModal = ({ onTaskCreated, taskToEdit, onTaskUpdated  }) => {
           )}
 
           <Box display="flex" justifyContent="flex-end" mt={3}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleClose}
-              sx={{ mr: 1 }}
-            >
+            <Button variant="outlined" color="secondary" onClick={handleClose} sx={{ mr: 1 }}>
               Cancel
             </Button>
-            <Button variant="contained" onClick={handleSubmit}>
-              Save
+            <Button variant="contained" onClick={handleSubmit} disabled={loading}>
+              {loading ? "Saving..." : "Save"}
             </Button>
           </Box>
         </Box>
       </Modal>
-    </div>
+    </>
   );
 };
 

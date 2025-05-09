@@ -9,7 +9,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
-const TaskCard = ({ task, onTaskUpdated }) => {
+const TaskCard = ({ task, onTaskUpdated, onEditClick }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
@@ -101,7 +101,6 @@ const TaskCard = ({ task, onTaskUpdated }) => {
                 const token = localStorage.getItem("token");
 
                 if (status === "incomplete") {
-                  // Custom complete endpoint
                   try {
                     const response = await axios.put(
                       `https://task-management-application-3dmi.onrender.com/tasks/${task._id}/complete`,
@@ -139,7 +138,7 @@ const TaskCard = ({ task, onTaskUpdated }) => {
           </Box>
 
           <Box sx={{ display: "flex", gap: 2 }}>
-            <IconButton onClick={() => setIsEditing(!isEditing)}>
+            <IconButton onClick={() => onEditClick(task)}>
               <EditIcon />
             </IconButton>
             <IconButton onClick={handleDelete} color="error">
