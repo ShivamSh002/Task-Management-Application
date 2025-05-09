@@ -119,4 +119,4 @@ Drag-and-drop task sorting
 Admin dashboard
 🧑‍💻 Author
 
-Developed by Avinash Roy
+Developed by Shivam Sharma
